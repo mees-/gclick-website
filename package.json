@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "gclick": "^0.1.0",
+    "gclick": "^0.1.1",
     "gclick-test-preset": "mees-/gclick-test-preset",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
