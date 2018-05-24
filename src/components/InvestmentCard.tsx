@@ -47,6 +47,7 @@ export default ({ name, state, buy }: Props) => {
       <button disabled={maxBuy === 0} onClick={() => buy()}>
         buy!
       </button>
+      <button onClick={() => buy(maxBuy)}>buy max</button>
     </div>
   )
 }
