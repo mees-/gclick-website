@@ -1,0 +1,12 @@
+.investment-card {
+  width: 300px;
+  margin: 30px;
+  display: inline-block;
+}
+
+.investment-card table {
+  border-collapse: separate;
+  border-spacing: 40px 0;
+  display: inline-block;
+  text-align: left;
+}

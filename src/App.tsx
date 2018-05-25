@@ -5,4 +5,4 @@ import './App.css'
 
 type Props = { game: GClick }
 
-export default (props: Props) => <Game {...props} />
+export default (props: Props) => <Game className="game-container" {...props} />

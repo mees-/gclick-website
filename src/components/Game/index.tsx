@@ -1,7 +1,14 @@
 import * as React from 'react'
 import InvestmentCard from '../InvestmentCard/index'
 import GClick from 'gclick'
-import { IToaster, Icon, Intent } from '@blueprintjs/core'
+import {
+  IToaster,
+  Intent,
+  Navbar,
+  NavbarGroup,
+  NavbarHeading,
+  Alignment
+} from '@blueprintjs/core'
 
 export type InvestmentState = {
   amount: number
@@ -12,7 +19,7 @@ export type InvestmentState = {
   maxBuy: number
 }
 
-type Props = { game: GClick }
+type Props = { game: GClick; className?: string }
 type State = {
   money: number
   investments: Array<InvestmentState>
@@ -39,9 +46,6 @@ export default class Game extends React.Component<Props, State> {
   private showBuyError(investmentName: string): void {
     this.toaster.show({
       message: `Cannot buy ${investmentName}`,
-      action: {
-        icon: <Icon icon="cross" />
-      },
       intent: Intent.DANGER
     })
   }
@@ -70,14 +74,22 @@ export default class Game extends React.Component<Props, State> {
 
   render() {
     return (
-      <div className="game">
-        <p>money: {this.state.money}</p>
+      <div className={this.props.className}>
+        <Navbar>
+          <NavbarGroup align={Alignment.LEFT}>
+            <NavbarHeading>GClick</NavbarHeading>
+          </NavbarGroup>
+          <NavbarGroup align={Alignment.RIGHT}>
+            <NavbarHeading>money: {this.state.money}</NavbarHeading>
+          </NavbarGroup>
+        </Navbar>
+
         {this.state.investments.map((state: InvestmentState, idx: number) => {
           const investment = this.props.game.investments[idx]
           return (
             <InvestmentCard
               name={investment.name}
-              state={state}
+              {...state}
               buy={(amount?: number) => {
                 try {
                   investment.buy(amount)
