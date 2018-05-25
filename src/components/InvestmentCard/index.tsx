@@ -1,6 +1,8 @@
 import * as React from 'react'
-import { InvestmentState } from './Game'
+import { InvestmentState } from '../Game/index'
 import { Investment } from 'gclick'
+
+import './index.css'
 
 type Props = { name: string; state: InvestmentState; buy: Investment['buy'] }
 

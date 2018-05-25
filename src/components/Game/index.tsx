@@ -1,6 +1,7 @@
 import * as React from 'react'
-import InvestmentCard from './InvestmentCard'
+import InvestmentCard from '../InvestmentCard/index'
 import GClick from 'gclick'
+import { IToaster, Icon, Intent } from '@blueprintjs/core'
 
 export type InvestmentState = {
   amount: number
@@ -18,22 +19,38 @@ type State = {
 }
 
 export default class Game extends React.Component<Props, State> {
+  toaster: IToaster
   constructor(props: Props) {
     super(props)
+
+    // get a global toaster
+    this.toaster = window.toaster
+
     this.state = Game.getDerivedStateFromProps(this.props)
 
     this.gameTickListener = this.gameTickListener.bind(this)
+    this.showBuyError = this.showBuyError.bind(this)
   }
 
-  gameTickListener() {
+  private gameTickListener() {
     this.setState(Game.getDerivedStateFromProps(this.props))
   }
 
-  componentDidMount() {
+  private showBuyError(investmentName: string): void {
+    this.toaster.show({
+      message: `Cannot buy ${investmentName}`,
+      action: {
+        icon: <Icon icon="cross" />
+      },
+      intent: Intent.DANGER
+    })
+  }
+
+  public componentDidMount() {
     this.props.game.start(this.gameTickListener)
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     this.props.game.stop()
   }
 
@@ -62,8 +79,12 @@ export default class Game extends React.Component<Props, State> {
               name={investment.name}
               state={state}
               buy={(amount?: number) => {
-                investment.buy(amount)
-                this.gameTickListener()
+                try {
+                  investment.buy(amount)
+                  this.gameTickListener()
+                } catch (e) {
+                  this.showBuyError(investment.name)
+                }
               }}
               key={idx}
             />
