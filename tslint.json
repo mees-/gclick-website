@@ -1,5 +1,5 @@
 {
-  "extends": ["@blueprintjs/tslint-config"],
+  "extends": [],
   "linterOptions": {
     "exclude": ["config/**/*.js", "node_modules/**/*.ts"]
   }
