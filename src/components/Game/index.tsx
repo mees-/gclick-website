@@ -1,6 +1,7 @@
 import * as React from 'react'
 import InvestmentCard from '../InvestmentCard/index'
 import GClick from 'gclick'
+import fpsCounter from '../../fpsCounter'
 import {
   IToaster,
   Intent,
@@ -21,26 +22,45 @@ export type InvestmentState = {
 
 type Props = { game: GClick; className?: string }
 type State = {
+  fps: number | null
   money: number
-  investments: Array<InvestmentState>
+  investments: InvestmentState[]
 }
 
 export default class Game extends React.Component<Props, State> {
   toaster: IToaster
+  loopID: number | null
+  fpsCounter: () => number
   constructor(props: Props) {
     super(props)
 
     // get a global toaster
     this.toaster = window.toaster
 
+    this.fpsCounter = fpsCounter()
+
+    window.gameView = React.createRef<this>()
+
     this.state = Game.getDerivedStateFromProps(this.props)
 
-    this.gameTickListener = this.gameTickListener.bind(this)
+    this.loop = this.loop.bind(this)
+    this.stopLoop = this.stopLoop.bind(this)
     this.showBuyError = this.showBuyError.bind(this)
   }
 
-  private gameTickListener() {
-    this.setState(Game.getDerivedStateFromProps(this.props))
+  private loop() {
+    this.props.game.tick()
+    this.setState({
+      ...Game.getDerivedStateFromProps(this.props, this.state),
+      fps: this.fpsCounter()
+    })
+    this.loopID = window.requestAnimationFrame(this.loop)
+  }
+
+  private stopLoop() {
+    if (this.loopID != null) {
+      window.cancelAnimationFrame(this.loopID)
+    }
   }
 
   private showBuyError(investmentName: string): void {
@@ -51,15 +71,16 @@ export default class Game extends React.Component<Props, State> {
   }
 
   public componentDidMount() {
-    this.props.game.start(this.gameTickListener)
+    this.loop()
   }
 
   public componentWillUnmount() {
-    this.props.game.stop()
+    this.stopLoop()
   }
 
-  static getDerivedStateFromProps({ game }: Props): State {
+  static getDerivedStateFromProps({ game }: Props, oldState?: State): State {
     return {
+      fps: (oldState && oldState.fps) || null,
       money: game.money,
       investments: game.investments.map(investment => ({
         amount: investment.amount,
@@ -80,6 +101,7 @@ export default class Game extends React.Component<Props, State> {
             <NavbarHeading>GClick</NavbarHeading>
           </NavbarGroup>
           <NavbarGroup align={Alignment.RIGHT}>
+            <NavbarHeading>fps: {this.state.fps}</NavbarHeading>
             <NavbarHeading>money: {this.state.money}</NavbarHeading>
           </NavbarGroup>
         </Navbar>
@@ -93,7 +115,6 @@ export default class Game extends React.Component<Props, State> {
               buy={(amount?: number) => {
                 try {
                   investment.buy(amount)
-                  this.gameTickListener()
                 } catch (e) {
                   this.showBuyError(investment.name)
                 }

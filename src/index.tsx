@@ -2,6 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'
 import './index.css'
+import GameView from './components/Game/index'
 import registerServiceWorker from './registerServiceWorker'
 import { Toaster, IToaster } from '@blueprintjs/core'
 
@@ -13,6 +14,7 @@ declare global {
   interface Window {
     game: Game
     toaster: IToaster
+    gameView: React.RefObject<GameView>
   }
 }
 window.game = game
