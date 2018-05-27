@@ -1,7 +1,7 @@
 import * as React from 'react'
 import InvestmentCard from '../InvestmentCard/index'
 import GClick from 'gclick'
-import fpsCounter from '../../fpsCounter'
+import FPSCounter from '../../FPSCounter'
 import {
   IToaster,
   Intent,
@@ -22,7 +22,6 @@ export type InvestmentState = {
 
 type Props = { game: GClick; className?: string }
 type State = {
-  fps: number | null
   money: number
   investments: InvestmentState[]
 }
@@ -30,16 +29,16 @@ type State = {
 export default class Game extends React.Component<Props, State> {
   toaster: IToaster
   loopID: number | null
-  fpsCounter: () => number
+  fpsCounter: FPSCounter
   constructor(props: Props) {
     super(props)
 
     // get a global toaster
     this.toaster = window.toaster
 
-    this.fpsCounter = fpsCounter()
+    this.fpsCounter = new FPSCounter(100)
 
-    window.gameView = React.createRef<this>()
+    window.gameView = this
 
     this.state = Game.getDerivedStateFromProps(this.props)
 
@@ -49,11 +48,9 @@ export default class Game extends React.Component<Props, State> {
   }
 
   private loop() {
+    this.fpsCounter.tick()
     this.props.game.tick()
-    this.setState({
-      ...Game.getDerivedStateFromProps(this.props, this.state),
-      fps: this.fpsCounter()
-    })
+    this.setState(Game.getDerivedStateFromProps(this.props, this.state))
     this.loopID = window.requestAnimationFrame(this.loop)
   }
 
@@ -80,7 +77,6 @@ export default class Game extends React.Component<Props, State> {
 
   static getDerivedStateFromProps({ game }: Props, oldState?: State): State {
     return {
-      fps: (oldState && oldState.fps) || null,
       money: game.money,
       investments: game.investments.map(investment => ({
         amount: investment.amount,
@@ -101,7 +97,7 @@ export default class Game extends React.Component<Props, State> {
             <NavbarHeading>GClick</NavbarHeading>
           </NavbarGroup>
           <NavbarGroup align={Alignment.RIGHT}>
-            <NavbarHeading>fps: {this.state.fps}</NavbarHeading>
+            <NavbarHeading>fps: {this.fpsCounter.fps()}</NavbarHeading>
             <NavbarHeading>money: {this.state.money}</NavbarHeading>
           </NavbarGroup>
         </Navbar>
