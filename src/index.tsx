@@ -14,7 +14,7 @@ declare global {
   interface Window {
     game: Game
     toaster: IToaster
-    gameView: React.RefObject<GameView>
+    gameView: GameView
   }
 }
 window.game = game
