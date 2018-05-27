@@ -1,5 +1,5 @@
 import GClick from 'gclick'
-import Game from './components/Game/index'
+import Game from './components/Game'
 import * as React from 'react'
 import './App.css'
 

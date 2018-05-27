@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'
 import './index.css'
-import GameView from './components/Game/index'
+import GameView from './components/Game'
 import registerServiceWorker from './registerServiceWorker'
 import { Toaster, IToaster } from '@blueprintjs/core'
 

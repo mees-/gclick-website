@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { InvestmentState } from '../Game/index'
+import { InvestmentState } from './Game'
 import { Investment } from 'gclick'
 import { Card, Button, ButtonGroup, Alignment } from '@blueprintjs/core'
 
-import './index.css'
+import './InvestmentCard.css'
 
 type Props = { name: string; buy: Investment['buy'] } & InvestmentState
 

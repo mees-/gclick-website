@@ -1,7 +1,7 @@
 import * as React from 'react'
-import InvestmentCard from '../InvestmentCard/index'
+import InvestmentCard from './InvestmentCard'
 import GClick from 'gclick'
-import FPSCounter from '../../FPSCounter'
+import FPSCount from './FPSCount'
 import {
   IToaster,
   Intent,
@@ -29,14 +29,14 @@ type State = {
 export default class Game extends React.Component<Props, State> {
   toaster: IToaster
   loopID: number | null
-  fpsCounter: FPSCounter
+  fpsCount: React.RefObject<FPSCount>
   constructor(props: Props) {
     super(props)
 
     // get a global toaster
     this.toaster = window.toaster
 
-    this.fpsCounter = new FPSCounter(10)
+    this.fpsCount = React.createRef()
 
     window.gameView = this
 
@@ -48,7 +48,7 @@ export default class Game extends React.Component<Props, State> {
   }
 
   private loop() {
-    this.fpsCounter.tick()
+    this.fpsCount.current && this.fpsCount.current.tick()
     this.props.game.tick()
     this.setState(Game.getDerivedStateFromProps(this.props, this.state))
     this.loopID = window.requestAnimationFrame(this.loop)
@@ -97,7 +97,9 @@ export default class Game extends React.Component<Props, State> {
             <NavbarHeading>GClick</NavbarHeading>
           </NavbarGroup>
           <NavbarGroup align={Alignment.RIGHT}>
-            <NavbarHeading>fps: {this.fpsCounter.fps()}</NavbarHeading>
+            <NavbarHeading>
+              fps: <FPSCount ref={this.fpsCount} averageSize={10} />
+            </NavbarHeading>
             <NavbarHeading>money: {this.state.money}</NavbarHeading>
           </NavbarGroup>
         </Navbar>
