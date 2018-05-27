@@ -36,7 +36,7 @@ export default class Game extends React.Component<Props, State> {
     // get a global toaster
     this.toaster = window.toaster
 
-    this.fpsCounter = new FPSCounter(100)
+    this.fpsCounter = new FPSCounter(10)
 
     window.gameView = this
 
