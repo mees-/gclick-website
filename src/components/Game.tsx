@@ -10,6 +10,7 @@ import {
   NavbarHeading,
   Alignment
 } from '@blueprintjs/core'
+const deepEqual = require('deep-equal')
 
 export type InvestmentState = {
   amount: number
@@ -18,6 +19,7 @@ export type InvestmentState = {
   profitPerCycle: number
   profitPerSecond: number
   maxBuy: number
+  progress: number
 }
 
 type Props = { game: GClick; className?: string }
@@ -50,7 +52,10 @@ export default class Game extends React.Component<Props, State> {
   private loop() {
     this.fpsCount.current && this.fpsCount.current.tick()
     this.props.game.tick()
-    this.setState(Game.getDerivedStateFromProps(this.props, this.state))
+    const newState = Game.getDerivedStateFromProps(this.props)
+    if (!deepEqual(this.state, newState)) {
+      this.setState(newState)
+    }
     this.loopID = window.requestAnimationFrame(this.loop)
   }
 
@@ -75,7 +80,7 @@ export default class Game extends React.Component<Props, State> {
     this.stopLoop()
   }
 
-  static getDerivedStateFromProps({ game }: Props, oldState?: State): State {
+  static getDerivedStateFromProps({ game }: Props): State {
     return {
       money: game.money,
       investments: game.investments.map(investment => ({
@@ -84,7 +89,8 @@ export default class Game extends React.Component<Props, State> {
         price: investment.price(),
         profitPerCycle: investment.profitPerCycle,
         profitPerSecond: investment.profitPerSecond,
-        maxBuy: investment.maxBuy(game.money)
+        maxBuy: investment.maxBuy(game.money),
+        progress: investment.timeInCurrentCycle / investment.currentDuration
       }))
     }
   }

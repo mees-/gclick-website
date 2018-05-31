@@ -1,7 +1,14 @@
 import * as React from 'react'
 import { InvestmentState } from './Game'
 import { Investment } from 'gclick'
-import { Card, Button, ButtonGroup, Alignment } from '@blueprintjs/core'
+import {
+  Card,
+  Button,
+  ButtonGroup,
+  Alignment,
+  ProgressBar,
+  Intent
+} from '@blueprintjs/core'
 
 import './InvestmentCard.css'
 
@@ -15,6 +22,7 @@ export default ({
   profitPerCycle,
   profitPerSecond,
   maxBuy,
+  progress,
   buy
 }: Props) => (
   <Card elevation={3} className="investment-card">
@@ -48,6 +56,10 @@ export default ({
       </tbody>
     </table>
     <hr />
+    <ProgressBar
+      value={currentDuration > 1000 ? progress : undefined}
+      intent={Intent.PRIMARY}
+    />
     <ButtonGroup alignText={Alignment.CENTER}>
       <Button text="buy" onClick={() => buy()} />
       <Button text="buy max" onClick={() => buy(maxBuy)} />
